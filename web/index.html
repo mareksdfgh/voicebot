@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Recognition Status</title>
+    <script src="/eel.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            background-color: #333; /* Dunkelgraue Hintergrundfarbe */
+        }
+        
+        #art {
+            width: 200px; /* Breite des Kunstwerks */
+            height: 200px; /* Höhe des Kunstwerks */
+            margin: 50px auto; /* Zentrierung des Kunstwerks */
+            position: relative; /* Positionierung relativ zur Elternelement */
+            overflow: hidden; /* Überlauf ausblenden */
+        }
+        
+        .shape {
+            position: absolute; /* Absolute Positionierung */
+            top: 50%; /* Vertikale Position in der Mitte */
+            left: 50%; /* Horizontale Position in der Mitte */
+            transform: translate(-50%, -50%); /* Zentrierung des Elements */
+            background-color: #ccc; /* Standardfarbe der Formen */
+            border-radius: 50%; /* Kreisförmige Form */
+            transition: all 0.5s ease-in-out; /* Übergangseffekt für sanfte Animationen */
+            animation-duration: 3s; /* Dauer der Animation */
+            animation-iteration-count: infinite; /* Anzahl der Iterationen (unendlich) */
+        }
+        
+        .circle {
+            width: 100px; /* Durchmesser des Kreises */
+            height: 100px; /* Durchmesser des Kreises */
+            animation-name: rotateCircle; /* Name der Kreis-Animation */
+        }
+        
+        .rectangle {
+            width: 150px; /* Breite des Rechtecks */
+            height: 100px; /* Höhe des Rechtecks */
+            animation-name: scaleRectangle; /* Name der Rechteck-Animation */
+        }
+        
+        @keyframes rotateCircle {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg); /* Anfangszustand der Kreis-Animation */
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg); /* Endzustand der Kreis-Animation */
+            }
+        }
+        
+        @keyframes scaleRectangle {
+            0% {
+                transform: translate(-50%, -50%) scale(1); /* Anfangszustand der Rechteck-Animation */
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2); /* Mittelzustand der Rechteck-Animation */
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1); /* Endzustand der Rechteck-Animation */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="art">
+        <div class="shape circle"></div>
+    </div>
+
+    <script>
+        // Function to update speech recognition status and adjust animations
+        function updateStatus(status) {
+            // Ändern der Formen basierend auf dem Status und Anpassung der Animationen
+            if (status) {
+                $(".shape").addClass("rectangle").removeClass("circle");
+                $(".shape").css("animation-duration", "1s"); // Kürzere Dauer für die Animation
+            } else {
+                $(".shape").addClass("circle").removeClass("rectangle");
+                $(".shape").css("animation-duration", "3s"); // Standarddauer für die Animation
+            }
+        }
+
+        // Function to check speech recognition status from Python
+        function checkStatus() {
+            eel.get_speech_recognition_status()(function(response) {
+                updateStatus(response.status);
+            });
+        }
+
+        // Check speech recognition status initially
+        checkStatus();
+
+        // Check speech recognition status every 2 seconds
+        setInterval(checkStatus, 2000);
+    </script>
+</body>
+</html>
